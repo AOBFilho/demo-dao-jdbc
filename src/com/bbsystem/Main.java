@@ -6,6 +6,7 @@ import com.bbsystem.models.entities.Department;
 import com.bbsystem.models.entities.Seller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,5 +28,11 @@ public class Main {
             sellerList.get().forEach(System.out::println);
         }
 
+        System.out.println("====== TEST 4: Seller insert ========");
+        Seller seller = new Seller(null,"jane","jane@gmail.com",
+                LocalDate.parse("11/03/1981", DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                1000.00, new Department(1,null));
+        sellerDao.insert(seller);
+        System.out.println("New seller id: "+seller.getId());
     }
 }

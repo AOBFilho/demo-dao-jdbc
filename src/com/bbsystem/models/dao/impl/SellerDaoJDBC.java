@@ -1,14 +1,12 @@
 package com.bbsystem.models.dao.impl;
 
+import com.bbsystem.db.DB;
 import com.bbsystem.db.exceptions.DBException;
 import com.bbsystem.models.dao.SellerDao;
 import com.bbsystem.models.entities.Department;
 import com.bbsystem.models.entities.Seller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -22,7 +20,34 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void insert(Seller obj) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO seller ");
+        sql.append("(Name, Email, BirthDate, BaseSalary, DepartmentId) ");
+        sql.append("VALUES ");
+        sql.append("(?, ?, ?, ?, ?)");
+        try (PreparedStatement preparedStatement = conn
+                .prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
+            DB.beginTransact();
+            preparedStatement.setString(1,obj.getName());
+            preparedStatement.setString(2,obj.getEmail());
+            preparedStatement.setDate(3,java.sql.Date.valueOf(obj.getBirthDate()));
+            preparedStatement.setDouble(4,obj.getBaseSalary());
+            preparedStatement.setInt(5,obj.getDepartment().getId());
+            int rowsAffected = preparedStatement.executeUpdate();
+            DB.commitTransact();
 
+            if (rowsAffected <= 0) {
+                throw new DBException("Error! No row affected!");
+            }
+
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                obj.setId(resultSet.getInt(1));
+            }
+        } catch (SQLException e) {
+            DB.rollBackTransact();
+            throw new DBException(e.getMessage());
+        }
     }
 
     @Override
