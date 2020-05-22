@@ -9,9 +9,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
         SellerDao sellerDao = DaoFactory.createSellerDao();
         System.out.println("====== TEST 1: Seller findById() ========");
         System.out.println(sellerDao.findById(3).get());
@@ -39,6 +42,12 @@ public class Main {
         seller = sellerDao.findById(1).get();
         seller.setName("Problema Resolvido");
         sellerDao.update(seller);
-        System.out.println("Update sucess!");
+        System.out.println("Update success!");
+
+        System.out.println("====== TEST 6: Seller deleteById ========");
+        System.out.println("Enter with seller id for delete: ");
+        int sellerIdDelete = sc.nextInt();
+        sellerDao.deleteById(sellerIdDelete);
+        System.out.println("Delete success!");
     }
 }
