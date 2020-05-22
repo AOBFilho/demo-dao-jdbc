@@ -34,5 +34,11 @@ public class Main {
                 1000.00, new Department(1,null));
         sellerDao.insert(seller);
         System.out.println("New seller id: "+seller.getId());
+
+        System.out.println("====== TEST 5: Seller update ========");
+        seller = sellerDao.findById(1).get();
+        seller.setName("Problema Resolvido");
+        sellerDao.update(seller);
+        System.out.println("Update sucess!");
     }
 }
