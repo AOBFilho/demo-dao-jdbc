@@ -58,7 +58,30 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public Optional<List<Seller>> findAll() {
-        return Optional.empty();
+        var sql = new StringBuilder();
+        sql.append("SELECT seller.*, department.name AS name_department ");
+        sql.append("FROM seller INNER JOIN department ON seller.DepartmentId = department.id ");
+        sql.append("ORDER BY seller.name");
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql.toString())) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Seller> sellers = new ArrayList<>();
+            Map<Integer,Department> departmentMap = new HashMap<>();
+            while (resultSet.next()) {
+                Integer departmentIdResultSet = resultSet.getInt("DepartmentId");
+                Department department;
+                if (departmentMap.containsKey(departmentIdResultSet)) {
+                    department = departmentMap.get(departmentIdResultSet);
+                } else {
+                    department = instantiateDepartment(resultSet);
+                    departmentMap.put(departmentIdResultSet,department);
+                };
+                Seller seller = instantiateSeller(resultSet,department);
+                sellers.add(seller);
+            }
+            return Optional.of(sellers);
+        } catch (SQLException e) {
+            throw new DBException(e.getMessage());
+        }
     }
 
     @Override
@@ -67,6 +90,7 @@ public class SellerDaoJDBC implements SellerDao {
         sql.append("SELECT seller.*, department.name AS name_department ");
         sql.append("FROM seller INNER JOIN department ON seller.DepartmentId = department.id ");
         sql.append("WHERE seller.DepartmentId = ? ");
+        sql.append("ORDER BY seller.name");
         try (PreparedStatement preparedStatement = conn.prepareStatement(sql.toString())) {
             preparedStatement.setInt(1,departmentId);
             ResultSet resultSet = preparedStatement.executeQuery();

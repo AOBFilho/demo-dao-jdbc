@@ -16,7 +16,13 @@ public class Main {
         System.out.println(sellerDao.findById(3).get());
 
         System.out.println("====== TEST 2: Seller findByDepartment ========");
-        Optional<List<Seller>> sellerList = sellerDao.findByDepartmentId(2);
+        Optional<List<Seller>> sellerListByDepartment = sellerDao.findByDepartmentId(2);
+        if (!sellerListByDepartment.isEmpty()) {
+            sellerListByDepartment.get().forEach(System.out::println);
+        }
+
+        System.out.println("====== TEST 3: Seller findAll ========");
+        Optional<List<Seller>> sellerList = sellerDao.findAll();
         if (!sellerList.isEmpty()) {
             sellerList.get().forEach(System.out::println);
         }
