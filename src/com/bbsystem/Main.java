@@ -1,6 +1,7 @@
 package com.bbsystem;
 
 import com.bbsystem.models.dao.DaoFactory;
+import com.bbsystem.models.dao.DepartmentDao;
 import com.bbsystem.models.dao.SellerDao;
 import com.bbsystem.models.entities.Department;
 import com.bbsystem.models.entities.Seller;
@@ -49,5 +50,35 @@ public class Main {
         int sellerIdDelete = sc.nextInt();
         sellerDao.deleteById(sellerIdDelete);
         System.out.println("Delete success!");
+
+
+        DepartmentDao departmentDao = DaoFactory.createDepartmentDao();
+        System.out.println("====== TEST 1: Department findById() ========");
+        System.out.println(departmentDao.findById(1).get());
+
+        System.out.println("====== TEST 2: Department findAll ========");
+        Optional<List<Department>> departments = departmentDao.findAll();
+        if (!departments.isEmpty()) {
+            departments.get().forEach(System.out::println);
+        }
+
+        System.out.println("====== TEST 3: Department insert ========");
+        Department department = new Department(null,"Hello");
+        departmentDao.insert(department);
+        System.out.println("New department id: "+department.getId());
+
+        System.out.println("====== TEST 4: Department update ========");
+        department = departmentDao.findById(1).get();
+        department.setName("Problema Resolvido");
+        departmentDao.update(department);
+        System.out.println("Update success!");
+
+        System.out.println("====== TEST 5: Seller deleteById ========");
+        System.out.println("Enter with department id for delete: ");
+        int departmentIdForDelete = sc.nextInt();
+        departmentDao.deleteById(departmentIdForDelete);
+        System.out.println("Delete success!");
+
+        sc.close();
     }
 }
