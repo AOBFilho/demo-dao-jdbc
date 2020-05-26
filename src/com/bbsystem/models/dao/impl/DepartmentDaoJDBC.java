@@ -4,9 +4,7 @@ import com.bbsystem.db.DB;
 import com.bbsystem.db.exceptions.DBException;
 import com.bbsystem.models.dao.DepartmentDao;
 import com.bbsystem.models.entities.Department;
-import com.mysql.jdbc.util.ResultSetUtil;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +79,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             preparedStatement.setInt(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return Optional.of(instanteateDepartment(resultSet));
+                return Optional.of(instantiateDepartment(resultSet));
             } else {
                 return Optional.empty();
             }
@@ -100,7 +98,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<Department> departments = new ArrayList<>();
             while (resultSet.next()) {
-                departments.add(instanteateDepartment(resultSet));
+                departments.add(instantiateDepartment(resultSet));
             }
             return departments.isEmpty() ? Optional.empty() : Optional.of(departments);
         } catch (SQLException e) {
@@ -108,7 +106,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
         }
     }
 
-    private Department instanteateDepartment(ResultSet resultSet) throws SQLException{
+    private Department instantiateDepartment(ResultSet resultSet) throws SQLException{
         Department department = new Department();
         department.setId(resultSet.getInt(1));
         department.setName(resultSet.getString(2));
